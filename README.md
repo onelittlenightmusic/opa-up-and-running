@@ -3,7 +3,7 @@
 Copyright: Hiro Osaki 2021
 
 <!-- vscode-markdown-toc -->
-* 1. [Your first coding at least cost: Try Rego Playground](#Yourfirstcodingatleastcost:TryRegoPlayground)
+* 1. [Your first coding: Try Rego Playground](#Yourfirstcoding:TryRegoPlayground)
 	* 1.1. [Walkthrough (5 min)](#Walkthrough5min)
 	* 1.2. [What OPA does (3 min)](#WhatOPAdoes3min)
 * 2. [Run OPA on your environment](#RunOPAonyourenvironment)
@@ -24,7 +24,9 @@ This document is for those who wants to use [Open Policy Agent (OPA)](https://ww
 
 The fastest way takes 8 min.
 
-##  1. <a name='Yourfirstcodingatleastcost:TryRegoPlayground'></a>Your first coding at least cost: Try Rego Playground
+[Japanese version](./README-jp.md)
+
+##  1. <a name='Yourfirstcoding:TryRegoPlayground'></a>Your first coding: Try Rego Playground
 
 You can grasp what OPA is without using actual OPA. This is the fastest way to try OPA. The way is ["Rego Playground"](https://play.openpolicyagent.org/), by courtesy of [Styra](styra.com).
 
@@ -285,7 +287,7 @@ You can grasp what OPA is without using actual OPA. This is the fastest way to t
   - A object declaration `hello {...}` in rego file means that `<object name>` is `hello`.
 - OPA's return value is JSON in the form of `{"result": ***}`.
   - Return values are varied by the requested endpoints.
-    - If `<package name>` is requested, response includes all objects.
+    - If `<package name>` is requested, response includes all objects in `"result"` field.
     - If `<package name>/<object name>` is requested, response includes one object output in `"result"` field.
 
 ##  3. <a name='Reference'></a>Reference
