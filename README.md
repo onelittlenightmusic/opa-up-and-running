@@ -20,7 +20,7 @@ Copyright: Hiro Osaki 2021
 	/vscode-markdown-toc-config -->
 <!-- /vscode-markdown-toc -->
 
-This document is for those who wants to use [Open Policy Agent (OPA)](https://www.openpolicyagent.org/) once. 
+This document is for those who wants to use [Open Policy Agent (OPA)](https://www.openpolicyagent.org/) once. This is meant to be a "hello world" for OPA.
 
 The fastest way takes 8 min.
 
