@@ -12,7 +12,11 @@ Copyright: Hiro Osaki 2021
 	* 2.3. [Run OPA as server (5 min)](#RunOPAasserver5min)
 	* 2.4. [Run OPA server with loading data (5 min)](#RunOPAserverwithloadingdata5min)
 	* 2.5. [What OPA server does (3 min)](#WhatOPAserverdoes3min)
-* 3. [Reference](#Reference)
+* 3. [ Run with OPA command line tool](#RunwithOPAcommandlinetool)
+	* 3.1. [Run `opa eval` command](#Runopaevalcommand)
+	* 3.2. [OPA command with data](#OPAcommandwithdata)
+	* 3.3. [Profiling](#Profiling)
+* 4. [Reference](#Reference)
 
 <!-- vscode-markdown-toc-config
 	numbering=true
@@ -290,7 +294,105 @@ You can grasp what OPA is without using actual OPA. This is the fastest way to t
     - If `<package name>` is requested, response includes all objects in `"result"` field.
     - If `<package name>/<object name>` is requested, response includes one object output in `"result"` field.
 
-##  3. <a name='Reference'></a>Reference
+##  3. <a name='RunwithOPAcommandlinetool'></a> Run with OPA command line tool `opa`
+
+###  3.1. <a name='Runopaevalcommand'></a>Run `opa eval` command
+
+- Save these files.
+
+  ```sh
+  # create input-raw.json
+  ```
+
+  ```json
+  {
+      "message": "world"
+  }
+  ```
+
+  ```sh
+  # create example.rego
+  ```
+
+  ```rego
+  package play
+
+  default hello = false
+
+  hello {
+      m := input.message
+      m == "world"
+  }
+
+  newdata = msg {
+      msg := concat("", ["Received the message: ", input.message])
+  }
+
+  importdata = msg {
+      msg := concat("", ["Received the static data: ", data.rule])
+  }
+  ```
+
+  The above example is exactly same as section 1.1. But please make sure that `input-raw.json` is not the same as `input.json` in section 2.3. This is not wrapped in `{"input": [content]}`. 
+
+- Run the following command.
+
+  ```sh
+  $ opa eval --data example.rego --format=pretty 'data.play.newdata' -I < input-raw.json
+
+  "Received the message: world"
+  ```
+  
+###  3.2. <a name='OPAcommandwithdata'></a>OPA command with data
+
+- Save the same files as section 3.1 and add the following file as `data.json`.
+
+  ```json
+  {
+    "rule": "be good"
+  }
+  ```
+
+- Run the following command.
+
+  ```sh
+  $ opa eval --data example.rego --data data.json --format=pretty 'data.play.importdata' -I < input-raw.json
+
+  "Received the static data: be good"
+  ```
+
+###  3.3. <a name='Profiling'></a>Profiling
+
+Profiling is to evaluate performance of the policy. It is useful when you need to drill down where the bottleneck is.
+
+- Add `--profile` option to `opa eval` command.
+
+  ```sh
+  $ opa eval --profile --data example.rego --data data.json --format=pretty 'data.play.importdata' -I < input-raw.json
+
+  "Received the static data: be good"
+
+  +--------------------------------+--------+
+  |             METRIC             | VALUE  |
+  +--------------------------------+--------+
+  | timer_rego_data_parse_ns       | 3544   |
+  | timer_rego_external_resolve_ns | 390    |
+  | timer_rego_load_files_ns       | 278247 |
+  | timer_rego_module_compile_ns   | 566760 |
+  | timer_rego_module_parse_ns     | 163201 |
+  | timer_rego_query_compile_ns    | 43304  |
+  | timer_rego_query_eval_ns       | 66240  |
+  | timer_rego_query_parse_ns      | 10492  |
+  +--------------------------------+--------+
+  +----------+----------+----------+----------------------+
+  |   TIME   | NUM EVAL | NUM REDO |       LOCATION       |
+  +----------+----------+----------+----------------------+
+  | 32.824µs | 1        | 1        | data.play.importdata |
+  | 30.905µs | 3        | 3        | example.rego:15      |
+  +----------+----------+----------+----------------------+
+  ```
+
+##  4. <a name='Reference'></a>Reference
 
 - Rego Playground: https://play.openpolicyagent.org/
 - Github `OPA` repository: https://github.com/open-policy-agent/opa
